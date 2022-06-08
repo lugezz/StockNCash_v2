@@ -1,1 +1,3 @@
-# StockNCash_v2
+StockNCash v2
+-------------
+Django Version
