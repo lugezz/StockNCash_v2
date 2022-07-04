@@ -1,6 +1,5 @@
 from django.db import models
 from django.forms.models import model_to_dict
-from datetime import datetime
 
 from erp.choices import gender_choices
 from snc.settings import MEDIA_URL, STATIC_URL
@@ -12,7 +11,7 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     def toJSON(self):
         item = model_to_dict(self)
         return item
@@ -24,10 +23,10 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=150, unique=True)
-    cate = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name = 'Categoria')
-    image = models.ImageField(upload_to='product', null=True, blank=True)
-    price = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    name = models.CharField(max_length=150, unique=True, verbose_name='Nombre')
+    cat = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Categoria')
+    image = models.ImageField(upload_to='product', null=True, blank=True, verbose_name='Imagen')
+    price = models.DecimalField(default=0.00, max_digits=12, decimal_places=2, verbose_name='Precio de Venta')
 
     def __str__(self):
         return self.name.capitalize()
@@ -37,10 +36,11 @@ class Product(models.Model):
             return f'{MEDIA_URL}{self.image}'
         else:
             return f'{STATIC_URL}img/empty.png'
-    
+
     class Meta:
         verbose_name = 'Producto'
         verbose_name_plural = 'Productos'
+
 
 class Client(models.Model):
     names = models.CharField(max_length=150, verbose_name='Nombres')
@@ -52,13 +52,14 @@ class Client(models.Model):
 
     def __str__(self):
         return self.names
-    
+
     class Meta:
         verbose_name = 'Cliente'
         verbose_name_plural = 'Clientes'
 
+
 class Sale(models.Model):
-    #Agregar número de factura
+    # Agregar número de factura
     cli = models.ForeignKey(Client, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
     subtotal = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
@@ -71,6 +72,7 @@ class Sale(models.Model):
     class Meta:
         verbose_name = 'Venta'
         verbose_name_plural = 'Ventas'
+
 
 class DetSale(models.Model):
     sale = models.ForeignKey(Sale, on_delete=models.CASCADE)

@@ -1,4 +1,4 @@
-from django.forms import *
+from django.forms import ModelForm, Textarea, TextInput
 from erp.models import Category, Product
 
 
@@ -48,6 +48,7 @@ class CategoryForm(ModelForm):
     #         #self.add_error('name', 'Le faltan caracteres')
     #     return cleaned
 
+
 class ProductForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -64,14 +65,14 @@ class ProductForm(ModelForm):
             ),
         }
 
-    # def save(self, commit=True):
-    #     data = {}
-    #     form = super()
-    #     try:
-    #         if form.is_valid():
-    #             form.save()
-    #         else:
-    #             data['error'] = form.errors
-    #     except Exception as e:
-    #         data['error'] = str(e)
-    #     return data
+    def save(self, commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data

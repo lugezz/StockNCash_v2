@@ -1,7 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http.response import JsonResponse
-from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -11,8 +10,6 @@ from django.views.generic.base import TemplateView
 from .models import Category, Product
 from .forms import CategoryForm, ProductForm
 
-def home_view(request):
-    return render (request, "home.html",{})
 
 # ------------- CATEGORÍAS ------------------------------------------------
 class CategoryListView(ListView):
@@ -46,6 +43,7 @@ class CategoryListView(ListView):
         context['entity'] = 'Categorias'
         return context
 
+
 class CategoryCreateView(LoginRequiredMixin, CreateView):
     model = Category
     form_class = CategoryForm
@@ -62,14 +60,14 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
         try:
             action = request.POST['action']
             if action == 'add':
-                form = self.get_form()  #Es lo mismo que escribir form = CategoryForm(request.POST)
-                data = form.save()  
+                form = self.get_form()  # Es lo mismo que escribir form = CategoryForm(request.POST)
+                data = form.save()
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
 
         except Exception as e:
-            data ['error'] = str(e)
-        
+            data['error'] = str(e)
+
         return JsonResponse(data)
 
     def get_context_data(self, **kwargs):
@@ -79,6 +77,7 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
         context['entity'] = 'Categorías'
         context['action'] = 'add'
         return context
+
 
 class CategoryUpdateView(LoginRequiredMixin, UpdateView):
     model = Category
@@ -97,15 +96,15 @@ class CategoryUpdateView(LoginRequiredMixin, UpdateView):
         try:
             action = request.POST['action']
             if action == 'edit':
-                form = self.get_form()  #Es lo mismo que escribir form = CategoryForm(request.POST)
+                form = self.get_form()  # Es lo mismo que escribir form = CategoryForm(request.POST)
                 data = form.save()
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
 
-            #data = Category.objects.get (pk=request.POST['id']).toJSON()
+            # data = Category.objects.get (pk=request.POST['id']).toJSON()
         except Exception as e:
-            data ['error'] = e
-        
+            data['error'] = e
+
         return JsonResponse(data)
 
     def get_context_data(self, **kwargs):
@@ -115,6 +114,7 @@ class CategoryUpdateView(LoginRequiredMixin, UpdateView):
         context['entity'] = 'Categorías'
         context['action'] = 'edit'
         return context
+
 
 class CategoryDeleteView(LoginRequiredMixin, DeleteView):
     model = Category
@@ -132,8 +132,8 @@ class CategoryDeleteView(LoginRequiredMixin, DeleteView):
         try:
             self.object.delete()
         except Exception as e:
-            data ['error'] = e
-        
+            data['error'] = e
+
         return JsonResponse(data)
 
     def get_context_data(self, **kwargs):
@@ -142,6 +142,7 @@ class CategoryDeleteView(LoginRequiredMixin, DeleteView):
         context['list_url'] = reverse_lazy('erp:category_list')
         context['entity'] = 'Categorías'
         return context
+
 
 class CategoryFormView(FormView):
     form_class = CategoryForm
@@ -158,7 +159,6 @@ class CategoryFormView(FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print (form.errors)
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -169,8 +169,8 @@ class CategoryFormView(FormView):
         context['action'] = 'add'
         return context
 
-# ------------- PRODUCTOS ------------------------------------------------
 
+# ------------- PRODUCTOS ------------------------------------------------
 class ProductListView(ListView):
     model = Product
     template_name = 'product/list.html'
@@ -199,18 +199,18 @@ class ProductCreateView(CreateView):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    # def post(self, request, *args, **kwargs):
-    #     data = {}
-    #     try:
-    #         action = request.POST['action']
-    #         if action == 'add':
-    #             form = self.get_form()
-    #             data = form.save()
-    #         else:
-    #             data['error'] = 'No ha ingresado a ninguna opción'
-    #     except Exception as e:
-    #         data['error'] = str(e)
-    #     return JsonResponse(data)
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+            if action == 'add':
+                form = self.get_form()
+                data = form.save()
+            else:
+                data['error'] = 'No ha ingresado a ninguna opción'
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -279,8 +279,8 @@ class ProductDeleteView(DeleteView):
         context['list_url'] = reverse_lazy('erp:product_list')
         return context
 
-# ------------- DASHBOARD ------------------------------------------------
 
+# ------------- DASHBOARD ------------------------------------------------
 class DashboardView(TemplateView):
     template_name = 'dashboard.html'
 

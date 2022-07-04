@@ -37,9 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #Libs
+    # Libs
     'widget_tweaks',
-    #Míos
+    # Míos
     'erp',
     'homepage',
     'login',
@@ -130,7 +130,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-    #BASE_DIR / 'homepage' / "static",
+    # BASE_DIR / 'homepage' / "static",
 ]
 
 
@@ -145,4 +145,3 @@ LOGIN_URL = '/login/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
-

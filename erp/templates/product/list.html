@@ -11,11 +11,11 @@
 <tr>
     <td>{{ obj.id }}</td>
     <td>{{ obj.name }}</td>
-    <td>{{ obj.cate.name }}</td>
+    <td>{{ obj.cat.name }}</td>
     <td class="text-center">
         <img src="{{ obj.get_image }}" class="img-fluid d-block mx-auto" style="width: 20px; height: 20px;">
     </td>
-    <td>{{ obj.pvp }}</td>
+    <td>{{ obj.price }}</td>
     <td class="text-center">
         <a href="{% url 'erp:product_update' obj.id %}" class="btn btn-warning btn-xs btn-flat">
             <i class="fas fa-edit"></i>
