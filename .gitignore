@@ -2,4 +2,5 @@ env/
 __pycache__/
 .vscode/
 /media
-migrations/
+*/migrations/
+*.sqlite3

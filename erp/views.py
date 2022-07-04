@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http.response import JsonResponse
@@ -7,8 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.base import TemplateView
 
-from .models import Category, Product
-from .forms import CategoryForm, ProductForm
+from .models import Category, Client, Product
+from .forms import CategoryForm, ClientForm, ProductForm
 
 
 # ------------- CATEGORÍAS ------------------------------------------------
@@ -288,4 +290,46 @@ class DashboardView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['panel'] = "Panel de Administración"
 
+        return context
+
+
+# ------------- CLIENTS ------------------------------------------------
+class ClientView(TemplateView):
+    template_name = 'client/list.html'
+
+    @method_decorator(csrf_exempt)
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+            if action == 'searchdata':
+                data = []
+                for i in Client.objects.all():
+                    data.append(i.toJSON())
+            elif action == 'add':
+                cli = Client()
+                cli.names = request.POST['names']
+                cli.surnames = request.POST['surnames']
+                cli.dni = request.POST['dni']
+                cli.date_birthday = datetime.strptime(request.POST['date_birthday'], '%d/%m/%Y')
+                # cli.date_birthday = request.POST['date_birthday'].strformat('%Y/%m/%d')
+                cli.address = request.POST['address']
+                cli.gender = request.POST['gender']
+                cli.save()
+            else:
+                data['error'] = 'Ha ocurrido un error'
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data, safe=False)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Listado de Clientes'
+        context['list_url'] = reverse_lazy('erp:client')
+        context['entity'] = 'Clientes'
+        context['form'] = ClientForm()
         return context

@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (CategoryDeleteView, CategoryFormView,
                     CategoryListView, CategoryCreateView, CategoryUpdateView,
+                    ClientView,
                     DashboardView,
                     ProductCreateView, ProductDeleteView,
                     ProductListView, ProductUpdateView
@@ -21,6 +22,9 @@ urlpatterns = [
     path('product/add/', ProductCreateView.as_view(), name='product_create'),
     path('product/update/<int:pk>/', ProductUpdateView.as_view(), name='product_update'),
     path('product/delete/<int:pk>/', ProductDeleteView.as_view(), name='product_delete'),
+
+    # Clientes
+    path('client/', ClientView.as_view(), name='client'),
 
     # Panel
     path('dashboard/', DashboardView.as_view(), name='dashboard'),

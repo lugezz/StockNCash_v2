@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'erp',
     'homepage',
     'login',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +54,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Agregados
+    'crum.CurrentRequestUserMiddleware'
 ]
 
 ROOT_URLCONF = 'snc.urls'
@@ -82,12 +85,21 @@ WSGI_APPLICATION = 'snc.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# TODO: Config MySql Config
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'db_snc',
+#         'USER': 'root',
+#         'PASSWORD': 'root'
+#     }
+# }
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'db_snc',
-        'USER': 'root',
-        'PASSWORD': 'root'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -145,3 +157,5 @@ LOGIN_URL = '/login/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
+
+AUTH_USER_MODEL = 'user.User'
