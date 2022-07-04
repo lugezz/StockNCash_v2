@@ -1,25 +1,19 @@
-from datetime import datetime
-
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
 from django.http.response import JsonResponse
 from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.base import TemplateView
 
-from .models import Category, Client, Product
-from .forms import CategoryForm, ClientForm, ProductForm
+from erp.mixins import IsSuperuserMixin
+from erp.models import Category, Client, Product
+from erp.forms import CategoryForm, ClientForm, ProductForm
 
 
 # ------------- CATEGORÍAS ------------------------------------------------
-class CategoryListView(ListView):
+class CategoryListView(LoginRequiredMixin, IsSuperuserMixin, ListView):
     model = Category
     template_name = 'category/list.html'
 
-    @method_decorator(csrf_exempt)
-    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -46,14 +40,13 @@ class CategoryListView(ListView):
         return context
 
 
-class CategoryCreateView(LoginRequiredMixin, CreateView):
+class CategoryCreateView(LoginRequiredMixin, IsSuperuserMixin, CreateView):
     model = Category
     form_class = CategoryForm
     template_name = 'category/create.html'
     success_url = reverse_lazy('erp:category_list')
     login_url = '/login/'
 
-    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -88,7 +81,6 @@ class CategoryUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('erp:category_list')
     login_url = '/login/'
 
-    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)
@@ -124,7 +116,6 @@ class CategoryDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'category/delete.html'
     success_url = reverse_lazy('erp:category_list')
 
-    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)
@@ -146,12 +137,11 @@ class CategoryDeleteView(LoginRequiredMixin, DeleteView):
         return context
 
 
-class CategoryFormView(FormView):
+class CategoryFormView(LoginRequiredMixin, FormView):
     form_class = CategoryForm
     template_name = "category/create.html"
     success_url = reverse_lazy("erp:category_list")
 
-    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -173,12 +163,10 @@ class CategoryFormView(FormView):
 
 
 # ------------- PRODUCTOS ------------------------------------------------
-class ProductListView(ListView):
+class ProductListView(LoginRequiredMixin, ListView):
     model = Product
     template_name = 'product/list.html'
 
-    @method_decorator(csrf_exempt)
-    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -191,13 +179,12 @@ class ProductListView(ListView):
         return context
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'product/create.html'
     success_url = reverse_lazy('erp:product_list')
 
-    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -223,13 +210,12 @@ class ProductCreateView(CreateView):
         return context
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'product/create.html'
     success_url = reverse_lazy('erp:product_list')
 
-    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)
@@ -256,12 +242,11 @@ class ProductUpdateView(UpdateView):
         return context
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     template_name = 'product/delete.html'
     success_url = reverse_lazy('erp:product_list')
 
-    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)
@@ -294,11 +279,11 @@ class DashboardView(TemplateView):
 
 
 # ------------- CLIENTS ------------------------------------------------
-class ClientView(TemplateView):
+class ClientListView(LoginRequiredMixin, ListView):
+    model = Client
     template_name = 'client/list.html'
+    permission_required = 'erp.view_client'
 
-    @method_decorator(csrf_exempt)
-    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -310,16 +295,6 @@ class ClientView(TemplateView):
                 data = []
                 for i in Client.objects.all():
                     data.append(i.toJSON())
-            elif action == 'add':
-                cli = Client()
-                cli.names = request.POST['names']
-                cli.surnames = request.POST['surnames']
-                cli.dni = request.POST['dni']
-                cli.date_birthday = datetime.strptime(request.POST['date_birthday'], '%d/%m/%Y')
-                # cli.date_birthday = request.POST['date_birthday'].strformat('%Y/%m/%d')
-                cli.address = request.POST['address']
-                cli.gender = request.POST['gender']
-                cli.save()
             else:
                 data['error'] = 'Ha ocurrido un error'
         except Exception as e:
@@ -329,7 +304,101 @@ class ClientView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Listado de Clientes'
-        context['list_url'] = reverse_lazy('erp:client')
+        context['create_url'] = reverse_lazy('erp:client_create')
+        context['list_url'] = reverse_lazy('erp:client_list')
         context['entity'] = 'Clientes'
-        context['form'] = ClientForm()
+        return context
+
+
+class ClientCreateView(LoginRequiredMixin, CreateView):
+    model = Client
+    form_class = ClientForm
+    template_name = 'client/create.html'
+    success_url = reverse_lazy('erp:client_list')
+    permission_required = 'erp.add_client'
+    url_redirect = success_url
+
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+            if action == 'add':
+                form = self.get_form()
+                data = form.save()
+            else:
+                data['error'] = 'No ha ingresado a ninguna opción'
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Creación un Cliente'
+        context['entity'] = 'Clientes'
+        context['list_url'] = self.success_url
+        context['action'] = 'add'
+        return context
+
+
+class ClientUpdateView(LoginRequiredMixin, UpdateView):
+    model = Client
+    form_class = ClientForm
+    template_name = 'client/create.html'
+    success_url = reverse_lazy('erp:client_list')
+    permission_required = 'erp.change_client'
+    url_redirect = success_url
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+            if action == 'edit':
+                form = self.get_form()
+                data = form.save()
+            else:
+                data['error'] = 'No ha ingresado a ninguna opción'
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edición un Cliente'
+        context['entity'] = 'Clientes'
+        context['list_url'] = self.success_url
+        context['action'] = 'edit'
+        return context
+
+
+class ClientDeleteView(LoginRequiredMixin, DeleteView):
+    model = Client
+    template_name = 'client/delete.html'
+    success_url = reverse_lazy('erp:client_list')
+    permission_required = 'erp.delete_client'
+    url_redirect = success_url
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            self.object.delete()
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Eliminación de un Cliente'
+        context['entity'] = 'Clientes'
+        context['list_url'] = self.success_url
         return context

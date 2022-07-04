@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import (CategoryDeleteView, CategoryFormView,
                     CategoryListView, CategoryCreateView, CategoryUpdateView,
-                    ClientView,
+                    ClientCreateView, ClientDeleteView,
+                    ClientListView, ClientUpdateView,
                     DashboardView,
                     ProductCreateView, ProductDeleteView,
                     ProductListView, ProductUpdateView
@@ -24,7 +25,10 @@ urlpatterns = [
     path('product/delete/<int:pk>/', ProductDeleteView.as_view(), name='product_delete'),
 
     # Clientes
-    path('client/', ClientView.as_view(), name='client'),
+    path('client/list/', ClientListView.as_view(), name='client_list'),
+    path('client/add/', ClientCreateView.as_view(), name='client_create'),
+    path('client/update/<int:pk>/', ClientUpdateView.as_view(), name='client_update'),
+    path('client/delete/<int:pk>/', ClientDeleteView.as_view(), name='client_delete'),
 
     # Panel
     path('dashboard/', DashboardView.as_view(), name='dashboard'),

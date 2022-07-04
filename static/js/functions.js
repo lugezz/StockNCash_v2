@@ -1,3 +1,20 @@
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
 function message_error(obj) {
     var html = '';
     if (typeof(obj) === 'object') {
@@ -16,7 +33,7 @@ function message_error(obj) {
     });
 }
 
-function submit_with_ajax(url, title, content, parameters, callback) {
+function submit_with_ajax(url, title, content, parameters, callback, csrf_token) {
     $.confirm({
         theme: 'material',
         title: title,
@@ -35,12 +52,12 @@ function submit_with_ajax(url, title, content, parameters, callback) {
                     $.ajax({
                         url: url, //window.location.pathname
                         type: 'POST',
+                        headers: {'X-CSRFToken': csrf_token},
                         data: parameters,
                         dataType: 'json',
                         processData: false,
                         contentType: false,
                     }).done(function(data) {
-                        console.log(data);
                         if (!data.hasOwnProperty('error')) {
                             callback();
                             return false;

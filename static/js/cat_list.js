@@ -1,3 +1,5 @@
+var csrftoken = getCookie('csrftoken');
+
 $(function() {
     $('#data').DataTable({
         responsive: true,
@@ -7,6 +9,7 @@ $(function() {
         ajax: {
             url: window.location.pathname,
             type: 'POST',
+            headers: {'X-CSRFToken': csrftoken},
             data: {
                 'action': 'searchdata'
             },
