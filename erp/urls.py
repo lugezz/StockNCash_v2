@@ -5,12 +5,17 @@ from .views import (CategoryDeleteView, CategoryFormView,
                     ClientListView, ClientUpdateView,
                     DashboardView,
                     ProductCreateView, ProductDeleteView,
-                    ProductListView, ProductUpdateView
+                    ProductListView, ProductUpdateView,
+                    SaleCreateView, SaleDeleteView,
+                    SaleListView, SaleUpdateView
                     )
 
 app_name = 'erp'
 
 urlpatterns = [
+    # Panel
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),
+
     # Categorias
     path('category/list/', CategoryListView.as_view(), name='category_list'),
     path('category/add/', CategoryCreateView.as_view(), name='category_create'),
@@ -30,6 +35,9 @@ urlpatterns = [
     path('client/update/<int:pk>/', ClientUpdateView.as_view(), name='client_update'),
     path('client/delete/<int:pk>/', ClientDeleteView.as_view(), name='client_delete'),
 
-    # Panel
-    path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    # Ventas
+    path('sale/list/', SaleListView.as_view(), name='sale_list'),
+    path('sale/add/', SaleCreateView.as_view(), name='sale_create'),
+    path('sale/update/<int:pk>/', SaleUpdateView.as_view(), name='sale_update'),
+    path('sale/delete/<int:pk>/', SaleDeleteView.as_view(), name='sale_delete'),
 ]

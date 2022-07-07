@@ -1,0 +1,8 @@
+* Auditoria en otras clases
+* Permisos de accesos por tareas
+* Orden de dataTable en títulos sale como codificado, corregir
+* Agregar descuentos
+
+--- Grandes cambios -----
+* Contabilidad
+

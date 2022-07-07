@@ -1,3 +1,4 @@
+from datetime import datetime
 from crum import get_current_user
 from django.db import models
 from django.forms.models import model_to_dict
@@ -42,6 +43,13 @@ class Product(models.Model):
     def __str__(self):
         return self.name.capitalize()
 
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['cat'] = self.cat.toJSON()
+        item['image'] = self.get_image()
+        item['price'] = format(self.price, '.2f')
+        return item
+
     def get_image(self):
         if self.image:
             return f'{MEDIA_URL}{self.image}'
@@ -80,8 +88,8 @@ class Client(models.Model):
 
 class Sale(models.Model):
     # Agregar número de factura
-    cli = models.ForeignKey(Client, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True)
+    cli = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='Cliente')
+    date = models.DateTimeField(default=datetime.now, verbose_name='Fecha')
     subtotal = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
     iva = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
     total = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)

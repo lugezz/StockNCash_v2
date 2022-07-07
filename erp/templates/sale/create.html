@@ -1,0 +1,113 @@
+{% extends 'list.html' %}
+{% load static %}
+
+{% block head_list %}
+    <!-- Datepicker -->
+    <script src="{% static 'js/sale_create.js' %}"></script>
+    <link href="{% static 'lib/bootstrap-datepicker-v1.9.0/css/bootstrap-datepicker.min.css' %}" rel='stylesheet' type='text/css'>
+    <script src="{% static 'lib/bootstrap-datepicker-v1.9.0/js/bootstrap-datepicker.min.js' %}" type='text/javascript'></script>
+    <script src="{% static 'lib/bootstrap-datepicker-v1.9.0/locales/bootstrap-datepicker.es.min.js' %}" type='text/javascript'></script>
+{% endblock %}
+
+{% block content %}
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">
+            {% if action == 'add' %}
+                <i class="fas fa-plus"></i>
+            {% else %}
+                <i class="fas fa-edit"></i>
+            {% endif %}
+            {{ title }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title"> 
+                        <i class="fas fa-boxes"></i>
+                            Detalle Producto</h3>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Buscador de Productos</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Ingrese nombre de producto">
+                                    <span class="input-group-append">
+                                    <button type="button" class="btn btn-warning btn-flat">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <hr>
+                            <table class="table table-bordered" id="standardTable">
+                                <thead>
+                                    <tr>
+                                        <th>Eliminar</th>
+                                        <th>Producto</th>
+                                        <th>Categoría</th>
+                                        <th>Precio</th>
+                                        <th>Cantidad</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Eliminar</td>
+                                        <td>Producto</td>
+                                        <td>Categoría</td>
+                                        <td>Precio</td>
+                                        <td>Cantidad</td>
+                                        <td>Subtotal</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-shopping-cart"></i> Datos de la factura</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Fecha de venta:</label>
+                            {{ form.date }}
+                        </div>
+                        <div class="form-group">
+                            <label>Cliente:</label>
+                            {{ form.cli }}
+                        </div>
+                        <div class="form-group">
+                            <label>Subtotal:</label>
+                            {{ form.subtotal }}
+                        </div>
+                        <div class="form-group">
+                            <label>IVA:</label>
+                            {{ form.iva }}
+                        </div>
+                        <div class="form-group">
+                            <label>Total a pagar:</label>
+                            {{ form.total }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a href="{{ create_url }}" class="btn btn-primary btn-flat btnTest">
+            <i class="fas fa-plus"></i> Nuevo registro
+        </a>
+        <a href="{{ list_url }}" class="btn btn-success btn-flat">
+            <i class="fas fa-sync"></i> Actualizar
+        </a>
+    </div>
+</div>
+{% endblock %}

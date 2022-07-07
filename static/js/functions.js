@@ -80,3 +80,15 @@ function submit_with_ajax(url, title, content, parameters, callback, csrf_token)
         }
     })
 }
+$(document).ready(function () {
+    $('#standardTable').DataTable({
+        responsive: true,
+        autoWidth: false,
+        destroy: true,
+        deferRender: true,
+    });
+    $('#datepicker').datepicker({
+        format: 'dd/mm/yyyy',
+        language: 'es',
+        }); 
+});

@@ -8,7 +8,8 @@
 <script src="{% static 'lib/datatables-1.11.3/responsive-2.2.9/js/responsive.bootstrap5.min.js' %}"></script>
 
 
-{% block head_list %} {% endblock %} {% endblock %} {% block content %}
+{% block head_list %} {% endblock %} {% endblock %}
+{% block content %}
 <div class="card card-primary">
     <div class="card-header">
         <h3 class="card-title">
@@ -16,7 +17,7 @@
         </h3>
     </div>
     <div class="card-body">
-        <table class="table" id="data">
+        <table class="table table-bordered" id="data">
             <thead>
                 {% block columns %} {% endblock %}
             </thead>

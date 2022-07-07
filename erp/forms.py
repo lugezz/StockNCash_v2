@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.forms import DateInput, ModelForm, Select, Textarea, TextInput
 
-from erp.models import Category, Client, Product
+from erp.models import Category, Client, Product, Sale
 
 
 class CategoryForm(ModelForm):
@@ -139,3 +139,38 @@ class ClientForm(ModelForm):
     #         raise forms.ValidationError('Validacion xxx')
     #         # self.add_error('name', 'Le faltan caracteres')
     #     return cleaned
+
+
+class SaleForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        block_attr = {
+            'readonly': True,
+            'class': 'form-control',
+        }
+
+        super().__init__(*args, **kwargs)
+        for form in self.visible_fields():
+            form.field.widget.attrs['class'] = 'form-control'
+        self.fields['date'].widget.attrs['autofocus'] = True
+
+        self.fields['subtotal'].widget.attrs = block_attr
+        self.fields['total'].widget.attrs = block_attr
+
+    class Meta:
+        model = Sale
+        fields = '__all__'
+        widgets = {
+            'cli': Select(
+                attrs={
+                    'class': 'form-control',
+                    'style': 'width: 100%'
+                }
+            ),
+            'date': DateInput(
+                format=("%d/%m/%Y"),
+                attrs={
+                    'value': datetime.now().strftime('%d/%m/%Y'),
+                    'id': 'datepicker',
+                }
+            )
+        }
